@@ -3,4 +3,4 @@
 .RData
 .Ruserdata
 UCI HAR Dataset/*
-AccelerometersData.csv
+AverageAccelerometersDataPerActivityPerSubject.csv
