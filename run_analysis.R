@@ -118,3 +118,5 @@ names(AverageAccelerometersDataPerActivityPerSubject) <-
       )
   )
 
+##write table to a file
+write.table(AverageAccelerometersDataPerActivityPerSubject, "AverageAccelerometersDataPerActivityPerSubject.csv", row.names = FALSE)
