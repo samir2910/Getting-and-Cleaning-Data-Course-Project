@@ -1,7 +1,8 @@
+#clearing workspace
+rm(list = ls())
+
 require(readr)
 require(dplyr)
-
-
 
 ## 1. Read and merges the training and the test sets to create one data set.
 
@@ -23,7 +24,7 @@ X_test <- read_fwf("UCI HAR Dataset/test/X_test.txt",
 
 
 ##tidyDataset is a merge of X_train and X_test
-X_all <- bind_rows(X_train, X_test)
+AccelerometersData <- bind_rows(X_train, X_test)
 
 
 
@@ -41,12 +42,12 @@ names(features) <- c("FeatureId","FeatureLabel")
 ##That gives us the index of the columns where we have means and standard deviations
 MeansAndStdIndexes <- grep("mean\\(\\)|std\\(\\)", features$FeatureLabel)
 
-##We extract only these columns from X_all
-X_all <- X_all %>%
+##We extract only these columns from AccelerometersData
+AccelerometersData <- AccelerometersData %>%
   select(MeansAndStdIndexes)
 
 ##We rename the columns with the feature name (removing the brakets)
-names(X_all) <- gsub("\\(\\)", "",features$FeatureLabel[MeansAndStdIndexes])
+names(AccelerometersData) <- gsub("\\(\\)", "",features$FeatureLabel[MeansAndStdIndexes])
 
 ## 3.Uses descriptive activity names to name the activities in the data set
 
@@ -76,7 +77,7 @@ y_all_activities <- y_all %>%
   select(ActivityLabel)
 
 ##Add to our table
-X_all <- bind_cols(X_all, y_all_activities)
+AccelerometersData <- bind_cols(AccelerometersData, y_all_activities)
 
 
 ##Adding subjects to our table
@@ -95,7 +96,7 @@ subject_all <- bind_rows(subject_train, subject_test)
 names(subject_all) <- "SubjectId"
 
 ## Adding to our table
-X_all <- X_all %>%
+AccelerometersData <- AccelerometersData %>%
   bind_cols(subject_all)
 
 ## 4.Appropriately labels the data set with decriptive variable names.
@@ -103,7 +104,17 @@ X_all <- X_all %>%
 
 
 ## 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
-AveragePerActivityPerSubject <- X_all %>%
+AverageAccelerometersDataPerActivityPerSubject <- AccelerometersData %>%
   group_by(SubjectId, ActivityLabel) %>%
   summarise_all(funs(mean))
+
+## We add _mean to all the column names we summarized
+names(AverageAccelerometersDataPerActivityPerSubject) <- 
+  c(
+    names(AverageAccelerometersDataPerActivityPerSubject)[c(1,2)],
+    paste(
+      names(AverageAccelerometersDataPerActivityPerSubject)[3:68],
+      "_mean"
+      )
+  )
 
